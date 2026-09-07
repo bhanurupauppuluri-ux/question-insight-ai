@@ -58,8 +58,15 @@ export function UploadPanel({ onDone }: { onDone: () => void }) {
   }
 
   async function submit() {
-    if (!title.trim()) return toast.error("Give this paper a title first.");
-    if (!file && text.trim().length < 20) return toast.error("Paste the questions or attach a file.");
+    if (!title.trim()) {
+      toast.error("Give this paper a title first.");
+      return;
+    }
+    if (!file && text.trim().length < 20) {
+      toast.error("Paste the questions or attach a file.");
+      return;
+    }
+
 
     setBusy(true);
     try {
