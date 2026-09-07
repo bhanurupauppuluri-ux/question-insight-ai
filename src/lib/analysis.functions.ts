@@ -75,7 +75,7 @@ Respond with ONLY a JSON object: {"summary","coverage_percent","questions":[],"t
 
 function extractJson(raw: string) {
   const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const body = fenced ? fenced[1] : raw;
+  const body = (fenced?.[1] ?? raw) as string;
   const start = body.indexOf("{");
   const end = body.lastIndexOf("}");
   if (start === -1 || end === -1) throw new Error("The AI response could not be read.");
