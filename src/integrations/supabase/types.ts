@@ -14,7 +14,151 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      exam_sets: {
+        Row: {
+          coverage_percent: number | null
+          created_at: string
+          id: string
+          raw_text: string | null
+          source_type: string
+          status: string
+          subject: string | null
+          summary: string | null
+          syllabus_text: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          coverage_percent?: number | null
+          created_at?: string
+          id?: string
+          raw_text?: string | null
+          source_type?: string
+          status?: string
+          subject?: string | null
+          summary?: string | null
+          syllabus_text?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          coverage_percent?: number | null
+          created_at?: string
+          id?: string
+          raw_text?: string | null
+          source_type?: string
+          status?: string
+          subject?: string | null
+          summary?: string | null
+          syllabus_text?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          ambiguity_score: number | null
+          bias_flag: boolean
+          bloom_level: string | null
+          created_at: string
+          difficulty: string | null
+          exam_set_id: string
+          expected_minutes: number | null
+          id: string
+          marks: number | null
+          number_label: string | null
+          position: number
+          quality_notes: string | null
+          text: string
+          topic: string | null
+          user_id: string
+        }
+        Insert: {
+          ambiguity_score?: number | null
+          bias_flag?: boolean
+          bloom_level?: string | null
+          created_at?: string
+          difficulty?: string | null
+          exam_set_id: string
+          expected_minutes?: number | null
+          id?: string
+          marks?: number | null
+          number_label?: string | null
+          position?: number
+          quality_notes?: string | null
+          text: string
+          topic?: string | null
+          user_id: string
+        }
+        Update: {
+          ambiguity_score?: number | null
+          bias_flag?: boolean
+          bloom_level?: string | null
+          created_at?: string
+          difficulty?: string | null
+          exam_set_id?: string
+          expected_minutes?: number | null
+          id?: string
+          marks?: number | null
+          number_label?: string | null
+          position?: number
+          quality_notes?: string | null
+          text?: string
+          topic?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_exam_set_id_fkey"
+            columns: ["exam_set_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      syllabus_topics: {
+        Row: {
+          covered: boolean
+          created_at: string
+          exam_set_id: string
+          id: string
+          name: string
+          question_count: number
+          user_id: string
+        }
+        Insert: {
+          covered?: boolean
+          created_at?: string
+          exam_set_id: string
+          id?: string
+          name: string
+          question_count?: number
+          user_id: string
+        }
+        Update: {
+          covered?: boolean
+          created_at?: string
+          exam_set_id?: string
+          id?: string
+          name?: string
+          question_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "syllabus_topics_exam_set_id_fkey"
+            columns: ["exam_set_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
