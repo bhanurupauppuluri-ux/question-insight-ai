@@ -118,13 +118,14 @@ export const analyzeExam = createServerFn({ method: "POST" })
       },
     ];
 
-    if (data.file) {
-      if (data.file.mime.startsWith("image/")) {
-        content.push({ type: "image_url", image_url: { url: data.file.dataUrl } });
+    for (const attachment of [data.file, data.rubricFile]) {
+      if (!attachment) continue;
+      if (attachment.mime.startsWith("image/")) {
+        content.push({ type: "image_url", image_url: { url: attachment.dataUrl } });
       } else {
         content.push({
           type: "file",
-          file: { filename: data.file.name, file_data: data.file.dataUrl },
+          file: { filename: attachment.name, file_data: attachment.dataUrl },
         });
       }
     }
