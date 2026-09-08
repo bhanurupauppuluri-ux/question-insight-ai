@@ -123,7 +123,8 @@ export const analyzeExam = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3.8-flash",
+        model: "openai/gpt-5.6-sol",
+        reasoning_effort: "none",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content },
