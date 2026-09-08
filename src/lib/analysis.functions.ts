@@ -172,6 +172,7 @@ export const analyzeExam = createServerFn({ method: "POST" })
         source_type: data.file ? (data.file.mime.startsWith("image/") ? "image" : "pdf") : "paste",
         raw_text: data.text ?? null,
         syllabus_text: data.syllabusText ?? null,
+        rubric_text: data.rubricText ?? null,
         status: "analyzed",
         coverage_percent: analysis.coverage_percent,
         summary: analysis.summary,
@@ -197,6 +198,9 @@ export const analyzeExam = createServerFn({ method: "POST" })
           bias_flag: q.bias_flag,
           quality_notes: q.quality_notes ?? null,
           topic: q.topic ?? null,
+          rubric_score: q.rubric_score ?? null,
+          rubric_criterion: q.rubric_criterion ?? null,
+          rubric_notes: q.rubric_notes ?? null,
         })),
       );
       if (error) throw new Error(error.message);
