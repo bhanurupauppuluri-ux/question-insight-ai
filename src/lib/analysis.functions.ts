@@ -6,19 +6,20 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const BLOOM = ["Remember", "Understand", "Apply", "Analyze", "Evaluate", "Create"] as const;
 const DIFFICULTY = ["Easy", "Medium", "Hard"] as const;
 
+const FileInput = z.object({
+  name: z.string(),
+  mime: z.string(),
+  dataUrl: z.string(),
+});
+
 const AnalyzeInput = z.object({
   title: z.string().min(1).max(160),
   subject: z.string().max(120).optional().nullable(),
   syllabusText: z.string().max(20000).optional().nullable(),
+  rubricText: z.string().max(20000).optional().nullable(),
   text: z.string().max(60000).optional().nullable(),
-  file: z
-    .object({
-      name: z.string(),
-      mime: z.string(),
-      dataUrl: z.string(),
-    })
-    .optional()
-    .nullable(),
+  file: FileInput.optional().nullable(),
+  rubricFile: FileInput.optional().nullable(),
 });
 
 const AnalysisSchema = z.object({
@@ -37,6 +38,9 @@ const AnalysisSchema = z.object({
         bias_flag: z.boolean().default(false),
         quality_notes: z.string().nullish(),
         topic: z.string().nullish(),
+        rubric_score: z.number().min(0).max(100).nullish(),
+        rubric_criterion: z.string().nullish(),
+        rubric_notes: z.string().nullish(),
       }),
     )
     .default([]),
