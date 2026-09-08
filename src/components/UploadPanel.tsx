@@ -88,8 +88,12 @@ export function UploadPanel({ onDone }: { onDone: () => void }) {
           title: title.trim(),
           subject: subject.trim() || null,
           syllabusText: syllabus.trim() || null,
+          rubricText: rubric.trim() || null,
           text: text.trim() || null,
           file: file ? { name: file.name, mime: file.mime, dataUrl: file.dataUrl } : null,
+          rubricFile: rubricFile
+            ? { name: rubricFile.name, mime: rubricFile.mime, dataUrl: rubricFile.dataUrl }
+            : null,
         },
       });
       toast.success(`Analysed ${result.questionCount} questions`);
