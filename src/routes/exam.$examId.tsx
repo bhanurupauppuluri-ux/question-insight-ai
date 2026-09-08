@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { ArrowLeft, AlertTriangle, Clock, Target } from "lucide-react";
+import { ArrowLeft, AlertTriangle, ClipboardCheck, Clock, Target } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -120,7 +120,11 @@ function ExamPage() {
           <StatCard icon={<Target className="size-4" />} label="Syllabus coverage" value={`${Math.round(Number(examSet.coverage_percent ?? 0))}%`} />
           <StatCard icon={<Clock className="size-4" />} label="Expected time" value={`${Math.round(totalMinutes)} min`} />
           <StatCard icon={<AlertTriangle className="size-4" />} label="Flagged questions" value={String(flagged.length)} />
-          <StatCard icon={<Target className="size-4" />} label="Uncovered topics" value={String(gaps.length)} />
+          <StatCard
+            icon={<ClipboardCheck className="size-4" />}
+            label="Rubric alignment"
+            value={avgRubric === null ? "—" : `${avgRubric}%`}
+          />
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-2">
