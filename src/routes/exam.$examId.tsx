@@ -91,6 +91,12 @@ function ExamPage() {
   const totalMinutes = questions.reduce((sum, q) => sum + Number(q.expected_minutes ?? 0), 0);
   const flagged = questions.filter((q) => q.bias_flag || Number(q.ambiguity_score ?? 0) >= 0.5);
   const gaps = topics.filter((t) => t.question_count === 0);
+  const rubricScored = questions.filter((q) => q.rubric_score !== null);
+  const avgRubric = rubricScored.length
+    ? Math.round(
+        rubricScored.reduce((sum, q) => sum + Number(q.rubric_score ?? 0), 0) / rubricScored.length,
+      )
+    : null;
 
   return (
     <main className="page-gradient min-h-screen px-4 py-10">
