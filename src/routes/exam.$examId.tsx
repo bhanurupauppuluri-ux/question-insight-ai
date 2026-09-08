@@ -116,7 +116,7 @@ function ExamPage() {
           </p>
         </header>
 
-        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <StatCard icon={<Target className="size-4" />} label="Syllabus coverage" value={`${Math.round(Number(examSet.coverage_percent ?? 0))}%`} />
           <StatCard icon={<Clock className="size-4" />} label="Expected time" value={`${Math.round(totalMinutes)} min`} />
           <StatCard icon={<AlertTriangle className="size-4" />} label="Flagged questions" value={String(flagged.length)} />
@@ -125,6 +125,7 @@ function ExamPage() {
             label="Rubric alignment"
             value={avgRubric === null ? "—" : `${avgRubric}%`}
           />
+          <StatCard icon={<Target className="size-4" />} label="Uncovered topics" value={String(gaps.length)} />
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-2">
