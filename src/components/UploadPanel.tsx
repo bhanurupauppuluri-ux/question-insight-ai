@@ -38,23 +38,36 @@ export function UploadPanel({ onDone }: { onDone: () => void }) {
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const [syllabus, setSyllabus] = useState("");
+  const [rubric, setRubric] = useState("");
+  const [rubricFile, setRubricFile] = useState<PickedFile | null>(null);
   const [text, setText] = useState("");
   const [file, setFile] = useState<PickedFile | null>(null);
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
+  const rubricInputRef = useRef<HTMLInputElement>(null);
 
-  async function pick(files: FileList | null) {
+  async function readPicked(files: FileList | null): Promise<PickedFile | null> {
     const picked = files?.[0];
-    if (!picked) return;
+    if (!picked) return null;
     if (!ACCEPTED.includes(picked.type)) {
       toast.error("Please choose a PDF, PNG, JPG or WEBP file.");
-      return;
+      return null;
     }
     if (picked.size > 15 * 1024 * 1024) {
       toast.error("Files must be under 15 MB.");
-      return;
+      return null;
     }
-    setFile(await readFile(picked));
+    return readFile(picked);
+  }
+
+  async function pick(files: FileList | null) {
+    const result = await readPicked(files);
+    if (result) setFile(result);
+  }
+
+  async function pickRubric(files: FileList | null) {
+    const result = await readPicked(files);
+    if (result) setRubricFile(result);
   }
 
   async function submit() {
