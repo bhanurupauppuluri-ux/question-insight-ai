@@ -170,6 +170,11 @@ function ExamPage() {
                   {q.marks ? <Badge variant="outline">{Number(q.marks)} marks</Badge> : null}
                   {q.bias_flag && <Badge variant="destructive">Possible bias</Badge>}
                   {Number(q.ambiguity_score ?? 0) >= 0.5 && <Badge variant="destructive">Ambiguous</Badge>}
+                  {q.rubric_score !== null && (
+                    <Badge variant={Number(q.rubric_score) >= 70 ? "secondary" : "destructive"}>
+                      Rubric {Math.round(Number(q.rubric_score))}%
+                    </Badge>
+                  )}
                 </div>
                 <p className="mt-3 text-sm leading-relaxed">{q.text}</p>
                 {q.topic && (
@@ -177,6 +182,24 @@ function ExamPage() {
                 )}
                 {q.quality_notes && (
                   <p className="mt-1 text-xs text-muted-foreground italic">{q.quality_notes}</p>
+                )}
+                {(q.rubric_criterion || q.rubric_notes) && (
+                  <div className="mt-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                    <p className="text-xs font-medium">
+                      Rubric criterion: {q.rubric_criterion ?? "Unmatched"}
+                    </p>
+                    {q.rubric_notes && (
+                      <p className="mt-1 text-xs text-muted-foreground">{q.rubric_notes}</p>
+                    )}
+                    {q.rubric_score !== null && (
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                        <div
+                          className="h-full rounded-full bg-accent"
+                          style={{ width: `${Math.min(100, Math.max(0, Number(q.rubric_score)))}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 )}
               </li>
             ))}
