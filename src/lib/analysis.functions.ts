@@ -69,6 +69,10 @@ For each question return:
 - bias_flag: true when wording shows cultural, gender, regional or socio-economic bias
 - quality_notes: one short sentence on clarity, bias or improvement
 - topic: the syllabus topic it maps to (use the supplied syllabus wording when given)
+- rubric_criterion: the marking-criterion name from the supplied rubric that this question assesses (null if no rubric)
+- rubric_score: 0-100 for how well the question aligns with that rubric criterion — is it markable
+  against the rubric, are the marks proportionate, does it elicit the evidence the rubric asks for (null if no rubric)
+- rubric_notes: one short sentence on the rubric fit or what is missing (null if no rubric)
 
 Also return topics: every syllabus topic supplied (or inferred when no syllabus is given) with the
 number of questions covering it and covered=true when question_count > 0.
@@ -102,6 +106,11 @@ export const analyzeExam = createServerFn({ method: "POST" })
           data.syllabusText
             ? `Syllabus outline:\n${data.syllabusText}`
             : "No syllabus supplied - infer the topics from the questions.",
+          data.rubricText
+            ? `Rubric / marking scheme:\n${data.rubricText}`
+            : data.rubricFile
+              ? "The rubric / marking scheme is attached as a file."
+              : "No rubric supplied - return null for rubric_criterion, rubric_score and rubric_notes.",
           data.text ? `Exam questions:\n${data.text}` : "The exam paper is attached as a file.",
         ]
           .filter(Boolean)
