@@ -38,23 +38,36 @@ export function UploadPanel({ onDone }: { onDone: () => void }) {
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const [syllabus, setSyllabus] = useState("");
+  const [rubric, setRubric] = useState("");
+  const [rubricFile, setRubricFile] = useState<PickedFile | null>(null);
   const [text, setText] = useState("");
   const [file, setFile] = useState<PickedFile | null>(null);
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
+  const rubricInputRef = useRef<HTMLInputElement>(null);
 
-  async function pick(files: FileList | null) {
+  async function readPicked(files: FileList | null): Promise<PickedFile | null> {
     const picked = files?.[0];
-    if (!picked) return;
+    if (!picked) return null;
     if (!ACCEPTED.includes(picked.type)) {
       toast.error("Please choose a PDF, PNG, JPG or WEBP file.");
-      return;
+      return null;
     }
     if (picked.size > 15 * 1024 * 1024) {
       toast.error("Files must be under 15 MB.");
-      return;
+      return null;
     }
-    setFile(await readFile(picked));
+    return readFile(picked);
+  }
+
+  async function pick(files: FileList | null) {
+    const result = await readPicked(files);
+    if (result) setFile(result);
+  }
+
+  async function pickRubric(files: FileList | null) {
+    const result = await readPicked(files);
+    if (result) setRubricFile(result);
   }
 
   async function submit() {
@@ -75,8 +88,12 @@ export function UploadPanel({ onDone }: { onDone: () => void }) {
           title: title.trim(),
           subject: subject.trim() || null,
           syllabusText: syllabus.trim() || null,
+          rubricText: rubric.trim() || null,
           text: text.trim() || null,
           file: file ? { name: file.name, mime: file.mime, dataUrl: file.dataUrl } : null,
+          rubricFile: rubricFile
+            ? { name: rubricFile.name, mime: rubricFile.mime, dataUrl: rubricFile.dataUrl }
+            : null,
         },
       });
       toast.success(`Analysed ${result.questionCount} questions`);
@@ -198,6 +215,51 @@ export function UploadPanel({ onDone }: { onDone: () => void }) {
           rows={5}
           placeholder={"Unit 1: Kinematics\nUnit 2: Laws of motion\nUnit 3: Work, energy and power"}
         />
+      </div>
+
+      <div className="mt-6 space-y-2">
+        <Label htmlFor="rubric">Rubric / marking scheme (optional)</Label>
+        <Textarea
+          id="rubric"
+          value={rubric}
+          onChange={(e) => setRubric(e.target.value)}
+          rows={5}
+          placeholder={
+            "Criterion 1: Conceptual understanding — 4 marks\nCriterion 2: Application of formula — 3 marks\nCriterion 3: Clarity of reasoning — 3 marks"
+          }
+        />
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => rubricInputRef.current?.click()}
+          >
+            <UploadCloud className="size-4" /> Upload rubric file
+          </Button>
+          <input
+            ref={rubricInputRef}
+            type="file"
+            accept={ACCEPTED.join(",")}
+            className="hidden"
+            onChange={(e) => void pickRubric(e.target.files)}
+          />
+          {rubricFile ? (
+            <span className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-sm">
+              {rubricFile.mime.startsWith("image/") ? (
+                <ImageIcon className="size-4 text-muted-foreground" />
+              ) : (
+                <FileText className="size-4 text-muted-foreground" />
+              )}
+              <span className="max-w-[14rem] truncate">{rubricFile.name}</span>
+              <button type="button" onClick={() => setRubricFile(null)} aria-label="Remove rubric">
+                <X className="size-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            </span>
+          ) : (
+            <span className="text-xs text-muted-foreground">PDF, photo or scan — max 15 MB</span>
+          )}
+        </div>
       </div>
 
       <Button onClick={submit} disabled={busy} className="mt-6 w-full sm:w-auto">

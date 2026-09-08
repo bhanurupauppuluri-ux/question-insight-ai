@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { ArrowLeft, AlertTriangle, Clock, Target } from "lucide-react";
+import { ArrowLeft, AlertTriangle, ClipboardCheck, Clock, Target } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -91,6 +91,12 @@ function ExamPage() {
   const totalMinutes = questions.reduce((sum, q) => sum + Number(q.expected_minutes ?? 0), 0);
   const flagged = questions.filter((q) => q.bias_flag || Number(q.ambiguity_score ?? 0) >= 0.5);
   const gaps = topics.filter((t) => t.question_count === 0);
+  const rubricScored = questions.filter((q) => q.rubric_score !== null);
+  const avgRubric = rubricScored.length
+    ? Math.round(
+        rubricScored.reduce((sum, q) => sum + Number(q.rubric_score ?? 0), 0) / rubricScored.length,
+      )
+    : null;
 
   return (
     <main className="page-gradient min-h-screen px-4 py-10">
@@ -110,10 +116,15 @@ function ExamPage() {
           </p>
         </header>
 
-        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <StatCard icon={<Target className="size-4" />} label="Syllabus coverage" value={`${Math.round(Number(examSet.coverage_percent ?? 0))}%`} />
           <StatCard icon={<Clock className="size-4" />} label="Expected time" value={`${Math.round(totalMinutes)} min`} />
           <StatCard icon={<AlertTriangle className="size-4" />} label="Flagged questions" value={String(flagged.length)} />
+          <StatCard
+            icon={<ClipboardCheck className="size-4" />}
+            label="Rubric alignment"
+            value={avgRubric === null ? "—" : `${avgRubric}%`}
+          />
           <StatCard icon={<Target className="size-4" />} label="Uncovered topics" value={String(gaps.length)} />
         </section>
 
@@ -159,6 +170,11 @@ function ExamPage() {
                   {q.marks ? <Badge variant="outline">{Number(q.marks)} marks</Badge> : null}
                   {q.bias_flag && <Badge variant="destructive">Possible bias</Badge>}
                   {Number(q.ambiguity_score ?? 0) >= 0.5 && <Badge variant="destructive">Ambiguous</Badge>}
+                  {q.rubric_score !== null && (
+                    <Badge variant={Number(q.rubric_score) >= 70 ? "secondary" : "destructive"}>
+                      Rubric {Math.round(Number(q.rubric_score))}%
+                    </Badge>
+                  )}
                 </div>
                 <p className="mt-3 text-sm leading-relaxed">{q.text}</p>
                 {q.topic && (
@@ -166,6 +182,24 @@ function ExamPage() {
                 )}
                 {q.quality_notes && (
                   <p className="mt-1 text-xs text-muted-foreground italic">{q.quality_notes}</p>
+                )}
+                {(q.rubric_criterion || q.rubric_notes) && (
+                  <div className="mt-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                    <p className="text-xs font-medium">
+                      Rubric criterion: {q.rubric_criterion ?? "Unmatched"}
+                    </p>
+                    {q.rubric_notes && (
+                      <p className="mt-1 text-xs text-muted-foreground">{q.rubric_notes}</p>
+                    )}
+                    {q.rubric_score !== null && (
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                        <div
+                          className="h-full rounded-full bg-accent"
+                          style={{ width: `${Math.min(100, Math.max(0, Number(q.rubric_score)))}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 )}
               </li>
             ))}

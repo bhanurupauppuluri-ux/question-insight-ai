@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           id: string
           raw_text: string | null
+          rubric_text: string | null
           source_type: string
           status: string
           subject: string | null
@@ -34,6 +35,7 @@ export type Database = {
           created_at?: string
           id?: string
           raw_text?: string | null
+          rubric_text?: string | null
           source_type?: string
           status?: string
           subject?: string | null
@@ -48,6 +50,7 @@ export type Database = {
           created_at?: string
           id?: string
           raw_text?: string | null
+          rubric_text?: string | null
           source_type?: string
           status?: string
           subject?: string | null
@@ -73,6 +76,9 @@ export type Database = {
           number_label: string | null
           position: number
           quality_notes: string | null
+          rubric_criterion: string | null
+          rubric_notes: string | null
+          rubric_score: number | null
           text: string
           topic: string | null
           user_id: string
@@ -90,6 +96,9 @@ export type Database = {
           number_label?: string | null
           position?: number
           quality_notes?: string | null
+          rubric_criterion?: string | null
+          rubric_notes?: string | null
+          rubric_score?: number | null
           text: string
           topic?: string | null
           user_id: string
@@ -107,6 +116,9 @@ export type Database = {
           number_label?: string | null
           position?: number
           quality_notes?: string | null
+          rubric_criterion?: string | null
+          rubric_notes?: string | null
+          rubric_score?: number | null
           text?: string
           topic?: string | null
           user_id?: string
