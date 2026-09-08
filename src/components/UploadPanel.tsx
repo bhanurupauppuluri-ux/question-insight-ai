@@ -217,6 +217,51 @@ export function UploadPanel({ onDone }: { onDone: () => void }) {
         />
       </div>
 
+      <div className="mt-6 space-y-2">
+        <Label htmlFor="rubric">Rubric / marking scheme (optional)</Label>
+        <Textarea
+          id="rubric"
+          value={rubric}
+          onChange={(e) => setRubric(e.target.value)}
+          rows={5}
+          placeholder={
+            "Criterion 1: Conceptual understanding — 4 marks\nCriterion 2: Application of formula — 3 marks\nCriterion 3: Clarity of reasoning — 3 marks"
+          }
+        />
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => rubricInputRef.current?.click()}
+          >
+            <UploadCloud className="size-4" /> Upload rubric file
+          </Button>
+          <input
+            ref={rubricInputRef}
+            type="file"
+            accept={ACCEPTED.join(",")}
+            className="hidden"
+            onChange={(e) => void pickRubric(e.target.files)}
+          />
+          {rubricFile ? (
+            <span className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-sm">
+              {rubricFile.mime.startsWith("image/") ? (
+                <ImageIcon className="size-4 text-muted-foreground" />
+              ) : (
+                <FileText className="size-4 text-muted-foreground" />
+              )}
+              <span className="max-w-[14rem] truncate">{rubricFile.name}</span>
+              <button type="button" onClick={() => setRubricFile(null)} aria-label="Remove rubric">
+                <X className="size-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            </span>
+          ) : (
+            <span className="text-xs text-muted-foreground">PDF, photo or scan — max 15 MB</span>
+          )}
+        </div>
+      </div>
+
       <Button onClick={submit} disabled={busy} className="mt-6 w-full sm:w-auto">
         {busy ? (
           <>
