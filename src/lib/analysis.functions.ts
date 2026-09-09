@@ -24,7 +24,7 @@ const FileInput = z.object({
 const AnalyzeInput = z.object({
   title: z.string().min(1).max(160),
   subject: z.string().max(120).optional().nullable(),
-  syllabusText: z.string().max(20000).optional().nullable(),
+  syllabusText: SyllabusInput.optional().nullable(),
   rubricText: z.string().max(20000).optional().nullable(),
   text: z.string().max(60000).optional().nullable(),
   file: FileInput.optional().nullable(),
