@@ -55,13 +55,30 @@ const AnalysisSchema = z.object({
     .default([]),
   topics: z
     .array(
-      z.object({
-        name: z.string(),
-        question_count: z.number().default(0),
-        covered: z.boolean().default(false),
-      }),
+      z
+        .union([
+          z.string(),
+          z.object({
+            name: z.string().nullish(),
+            topic: z.string().nullish(),
+            title: z.string().nullish(),
+            question_count: z.number().nullish(),
+            questions: z.number().nullish(),
+            count: z.number().nullish(),
+            covered: z.boolean().nullish(),
+          }),
+        ])
+        .transform((raw) => {
+          if (typeof raw === "string") {
+            return { name: raw.trim(), question_count: 0, covered: false };
+          }
+          const name = (raw.name ?? raw.topic ?? raw.title ?? "").toString().trim();
+          const question_count = raw.question_count ?? raw.questions ?? raw.count ?? 0;
+          return { name, question_count, covered: raw.covered ?? question_count > 0 };
+        }),
     )
-    .default([]),
+    .default([])
+    .transform((topics) => topics.filter((t) => t.name.length > 0)),
 });
 
 const SYSTEM_PROMPT = `You are an assessment-design expert who audits exam papers.
