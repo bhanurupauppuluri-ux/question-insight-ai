@@ -2,6 +2,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { parseSyllabusTopics, syllabusTopicsToText } from "@/lib/parser";
+
+const SyllabusInput = z
+  .union([
+    z.string().max(20000),
+    z.array(z.string().max(500)).max(200),
+    z.array(z.object({ name: z.string().max(500) })).max(200),
+  ])
+  .transform((value) => syllabusTopicsToText(parseSyllabusTopics(value)));
 
 const BLOOM = ["Remember", "Understand", "Apply", "Analyze", "Evaluate", "Create"] as const;
 const DIFFICULTY = ["Easy", "Medium", "Hard"] as const;
@@ -15,7 +24,7 @@ const FileInput = z.object({
 const AnalyzeInput = z.object({
   title: z.string().min(1).max(160),
   subject: z.string().max(120).optional().nullable(),
-  syllabusText: z.string().max(20000).optional().nullable(),
+  syllabusText: SyllabusInput.optional().nullable(),
   rubricText: z.string().max(20000).optional().nullable(),
   text: z.string().max(60000).optional().nullable(),
   file: FileInput.optional().nullable(),
